@@ -44,7 +44,7 @@
                             <Label Content="Parola:" HorizontalContentAlignment="Right" Grid.Row="4"/>
                             <PasswordBox Height="24" Margin="0,3,3,0" x:Name="textBox_DatabasePassword" x:FieldModifier="private" PasswordChanged="textBox_DatabasePassword_PasswordChanged" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2"  />
 
-                            <CheckBox Content="Securitate Integrala" HorizontalAlignment="Left" Margin="0,3,0,0" x:FieldModifier="private" x:Name="checkBoxDatabaseIntegratedSecurity" Grid.Row="5" Grid.Column="1"/>
+                            <CheckBox Click="checkBox_DatabaseIntegratedSecurity_Click" Content="Securitate Integrala" HorizontalAlignment="Left" Margin="0,3,0,0" x:FieldModifier="private" x:Name="checkBox_DatabaseIntegratedSecurity" Grid.Row="5" Grid.Column="1"/>
                         </Grid>
 
 

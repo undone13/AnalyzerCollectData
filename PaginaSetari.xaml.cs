@@ -35,10 +35,18 @@ namespace AnalyzerCollectData
 
         private void buton_testConexiune_Click(object sender, RoutedEventArgs e)
         {
+            string connectionString = "";
             try
             {
+                if(checkBox_DatabaseIntegratedSecurity.IsChecked == true)
+                {
+                    connectionString = "Data Source=" + textBox_DatabaseServer.Text + ";Initial Catalog=" + textBox_DatabaseName.Text + ";Integrated Security=True";
+                }
+                else
+                {
+                    connectionString = "Data Source =" + textBox_DatabaseServer.Text + "; Initial Catalog =" + textBox_DatabaseName.Text + ";user ID=" + textBox_DatabaseUsername.Text + ";Password =" + textBox_DatabasePassword.Password + ";";
+                }
 
-                string connectionString = "Data Source=" + textBox_DatabaseServer.Text + ";Initial Catalog=" + textBox_DatabaseName.Text + ";Integrated Security=True";
                 SqlConnection sql = new SqlConnection(connectionString);
                 sql.Open();
 
@@ -56,8 +64,26 @@ namespace AnalyzerCollectData
             document.Load(AnalyzerCollectData.PaginaPrincipala.filename);
             XmlNode root = document.SelectSingleNode("Database");
 
-            XmlAttribute type = document.CreateAttribute("type");
-            root.Attributes.Append(type);
+
+            //Selectare TIP Server
+            if (root.Attributes[0].Value == "Microsoft SQL Server")
+                combobox_tip.SelectedIndex = 0;
+            else
+                combobox_tip.SelectedIndex = 1;
+
+            //Selectare Integrated Security
+            if (root.Attributes[1].Value == "true")
+            {
+                textBox_DatabasePassword.IsEnabled = false;
+                textBox_DatabaseUsername.IsEnabled = false;
+                checkBox_DatabaseIntegratedSecurity.IsChecked = true;
+            }
+            else
+            {
+                textBox_DatabasePassword.IsEnabled = true;
+                textBox_DatabaseUsername.IsEnabled = true;
+                checkBox_DatabaseIntegratedSecurity.IsChecked = false;  
+            }
 
             XmlNode server = root.SelectSingleNode("server");
             textBox_DatabaseServer.Text = server.InnerText;
@@ -71,36 +97,20 @@ namespace AnalyzerCollectData
 
         private void textBox_DatabaseServer_TextChanged(object sender, TextChangedEventArgs e)
         {
-            XmlDocument document = new XmlDocument();
-            document.Load(AnalyzerCollectData.PaginaPrincipala.filename);
-            XmlNode root = document.SelectSingleNode("Database");
-            XmlNode server = root.SelectSingleNode("server");
-            server.InnerText = textBox_DatabaseServer.Text;
-
-            document.Save(AnalyzerCollectData.PaginaPrincipala.filename);
+            dataChangeTextbox("server", textBox_DatabaseServer);
         }
 
         private void textBox_DatabaseName_TextChanged(object sender, TextChangedEventArgs e)
         {
-            XmlDocument document = new XmlDocument();
-            document.Load(AnalyzerCollectData.PaginaPrincipala.filename);
-            XmlNode root = document.SelectSingleNode("Database");
-            XmlNode dbname = root.SelectSingleNode("dbName");
-            dbname.InnerText = textBox_DatabaseName.Text;
-
-            document.Save(AnalyzerCollectData.PaginaPrincipala.filename);
+            dataChangeTextbox("dbName", textBox_DatabaseName);
         }
         private void textBox_DatabaseUsername_TextChanged(object sender, TextChangedEventArgs e)
         {
-            XmlDocument document = new XmlDocument();
-            document.Load(AnalyzerCollectData.PaginaPrincipala.filename);
-            XmlNode root = document.SelectSingleNode("Database");
-            XmlNode username = root.SelectSingleNode("username");
-            username.InnerText = textBox_DatabaseUsername.Text;
-
-            document.Save(AnalyzerCollectData.PaginaPrincipala.filename);
+            dataChangeTextbox("username", textBox_DatabaseUsername);
         }
 
+
+        //PASSWORDBOX
         private void textBox_DatabasePassword_PasswordChanged(object sender, RoutedEventArgs e)
         {
             XmlDocument document = new XmlDocument();
@@ -118,6 +128,40 @@ namespace AnalyzerCollectData
             document.Load(AnalyzerCollectData.PaginaPrincipala.filename);
             XmlNode root = document.SelectSingleNode("Database");
             root.Attributes[0].Value = combobox_tip.Text;
+
+            document.Save(AnalyzerCollectData.PaginaPrincipala.filename);
+        }
+
+        //CHECKBOX
+        private void checkBox_DatabaseIntegratedSecurity_Click(object sender, RoutedEventArgs e)
+        {
+            XmlDocument document = new XmlDocument();
+            document.Load(AnalyzerCollectData.PaginaPrincipala.filename);
+            XmlNode root = document.SelectSingleNode("Database");
+            if (checkBox_DatabaseIntegratedSecurity.IsChecked == true)
+            {
+                textBox_DatabasePassword.IsEnabled = false;
+                textBox_DatabaseUsername.IsEnabled = false;
+                root.Attributes[1].Value = "true";
+            }
+            else
+            {
+                textBox_DatabasePassword.IsEnabled = true;
+                textBox_DatabaseUsername.IsEnabled = true;
+                root.Attributes[1].Value = "false";
+            }
+
+            document.Save(AnalyzerCollectData.PaginaPrincipala.filename);
+        }
+
+        private void dataChangeTextbox(string xmlNodeName, TextBox textbox)
+        {
+            XmlDocument document = new XmlDocument();
+            document.Load(AnalyzerCollectData.PaginaPrincipala.filename);
+            XmlNode root = document.SelectSingleNode("Database");
+
+            XmlNode nodeName = root.SelectSingleNode(xmlNodeName);
+            nodeName.InnerText = textbox.Text;
 
             document.Save(AnalyzerCollectData.PaginaPrincipala.filename);
         }

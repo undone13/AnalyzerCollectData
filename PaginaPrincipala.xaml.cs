@@ -53,6 +53,10 @@ namespace AnalyzerCollectData
             type.InnerText = "Microsoft SQL Server";
             db.Attributes.Append(type);
 
+            XmlAttribute security = document.CreateAttribute("integratedSecurity");
+            security.InnerText = "True";
+            db.Attributes.Append(security);
+
             XmlNode server = document.CreateElement("server");
             XmlNode dbname = document.CreateElement("dbName");
             XmlNode username = document.CreateElement("username");
